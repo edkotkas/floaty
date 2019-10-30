@@ -160,3 +160,7 @@ typings/
 .dynamodb/
 
 .sass-cache
+dist/
+.idea/
+*.css
+*.css.map

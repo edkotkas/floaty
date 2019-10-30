@@ -1,18 +1,42 @@
 {
   "name": "floaty",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.0",
+  "description": "> Float me a window!",
   "main": "main.js",
   "scripts": {
     "start": "electron . --inspect",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "build": "electron-builder"
   },
-  "author": "",
+  "build": {
+    "appId": "com.edkotkas.floaty",
+    "productName": "floaty"
+  },
+  "author": "Eduard Kotkas",
   "license": "ISC",
   "devDependencies": {
     "electron": "^7.0.0",
     "electron-builder": "^21.2.0",
     "electron-reloader": "^0.3.0",
     "node-sass": "^4.13.0"
-  }
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edkotkas/floaty.git"
+  },
+  "keywords": [
+    "floaty",
+    "electron",
+    "app",
+    "window",
+    "browser",
+    "opacity",
+    "transparent",
+    "floating"
+  ],
+  "bugs": {
+    "url": "https://github.com/edkotkas/floaty/issues"
+  },
+  "homepage": "https://github.com/edkotkas/floaty#readme"
 }
