@@ -1,16 +1,34 @@
 const electron = require('electron')
-const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, screen } = electron
+const {app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, screen} = electron
 const path = require('path')
 
-let url, tray, window, positioner
+let url, tray, window, toolbox
 
 app.dock && app.dock.hide()
 
-
 const config = {
-  clickable: false
+  clickable: false,
+  opacity: 1
 }
 
+function toggleClickThrough() {
+  config.clickable = !config.clickable
+  config.clickable ? toolbox.hide() : toolbox.show()
+  window.setIgnoreMouseEvents(config.clickable)
+}
+
+const shortcuts = [
+  {
+    key: 'CommandOrControl+Shift+X',
+    description: 'Click-Through',
+    exec: toggleClickThrough
+  },
+  {
+    key: 'CommandOrControl+Shift+C',
+    description: 'Close',
+    exec: app.quit
+  }
+]
 
 const createWindow = () => {
   window = new BrowserWindow({
@@ -29,7 +47,30 @@ const createWindow = () => {
   window.setVisibleOnAllWorkspaces(true)
   window.setIgnoreMouseEvents(config.clickable)
 
-  window.loadFile('./index.html')
+  window.loadFile('./views/main/index.html')
+}
+
+const createToolbox = () => {
+  const {x, y} = window.getBounds()
+
+  toolbox = new BrowserWindow({
+    x,
+    y: y - 60,
+    width: 500,
+    height: 50,
+    fullscreenable: false,
+    resizable: false,
+    frame: false,
+    skipTaskbar: true,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
+
+  toolbox.setAlwaysOnTop(true, "floating", 1)
+  toolbox.setVisibleOnAllWorkspaces(true)
+
+  toolbox.loadFile('./views/toolbox/index.html')
 }
 
 const createTray = () => {
@@ -38,65 +79,24 @@ const createTray = () => {
 
   tray.on('click', () => {
     window.isVisible() ? window.hide() : window.show()
+    toolbox.isVisible() ? toolbox.hide() : toolbox.show()
   })
 
   tray.setContextMenu(
     Menu.buildFromTemplate([
       {
-        label: 'Setup',
-        click: () => {
-          window.loadFile('./index.html')
-        }
-      },
-      { type: 'separator' },
-      {
         label: 'Open Externally',
         click: () => {
-          electron.shell.openExternal(url)
+          url && electron.shell.openExternal(url)
         }
       },
-      { type: 'separator' },
+      {type: 'separator'},
       {
-        label: 'Options', submenu: [
-          {
-            label: 'Opacity', submenu: [
-              { label: '10%', click: () => window.setOpacity(0.1) },
-              { label: '20%', click: () => window.setOpacity(0.2) },
-              { label: '50%', click: () => window.setOpacity(0.5) },
-              { label: '80%', click: () => window.setOpacity(0.8) },
-              { label: '100%', click: () => window.setOpacity(1) }
-            ]
-          }
-        ]
+        label: 'Shortcuts', submenu: shortcuts.map(x => ({
+          label: x.key, sublabel: x.description, click: x.exec
+        }))
       },
-      { type: 'separator' },
-      {
-        label: 'Icons', submenu: [
-          {
-            label: 'Cat Footprint icon by Icons8',
-            click: () => {
-              electron.shell.openExternal('https://icons8.com/icon/121198/cat-footprint')
-            }
-          },
-          {
-            label: 'Arrows icon by Icons8',
-            click: () => {
-              electron.shell.openExternal('https://www.flaticon.com/authors/those-icons')
-            }
-          }
-        ]
-      },
-      { type: 'separator' },
-      {
-        label: 'Shortcuts', submenu: [
-          { label: 'CmdOrCtrl+Shift+X', sublabel: 'Click-Through' },
-          { label: 'CmdOrCtrl+Shift+C', sublabel: 'Close' },
-          { label: 'CmdOrCtrl+Shift+S', sublabel: 'Setup' },
-          { label: 'CmdOrCtrl+Shift+M', sublabel: 'Minimize' },
-          { label: 'CmdOrCtrl+Shift+P', sublabel: 'Positioner' }
-        ]
-      },
-      { type: 'separator' },
+      {type: 'separator'},
       {
         label: 'Close',
         click: () => window.close()
@@ -105,62 +105,83 @@ const createTray = () => {
   )
 }
 
+function rotateOpacity() {
+  const presets = [1, 0.8, 0.5, 0.2, 0.1]
+  let current = presets.indexOf(config.opacity)
+  if (current === presets.length - 1) {
+    current = 0
+  } else {
+    current += 1
+  }
+
+  config.opacity = presets[current]
+  window.setOpacity(config.opacity)
+}
+
 app.on('ready', () => {
   createTray()
   createWindow()
+  createToolbox()
 
-  globalShortcut.register('CommandOrControl+Shift+X', () => {
-    config.clickable = !config.clickable
-    window.setIgnoreMouseEvents(config.clickable)
+  shortcuts.map(x => globalShortcut.register(x.key, x.exec))
+  ipcMain.on('url', (event, arg) => arg && loadPage(arg))
+
+  ipcMain.on('click', () => toggleClickThrough())
+  ipcMain.on('opacity', () => rotateOpacity())
+
+  let moving = null
+
+  ipcMain.on('move', () => {
+    if (!moving) {
+      return moving = setInterval(() => {
+        const {x, y} = screen.getCursorScreenPoint()
+        toolbox.setBounds({
+          x: x - 475,
+          y: y - 26,
+          width: 500,
+          height: 50
+        })
+
+        window.setPosition(...toolbox.getPosition())
+      }, 30)
+    }
+
+    correctToolboxPosition()
+
+    clearInterval(moving)
+    moving = null
   })
 
-  globalShortcut.register('CommandOrControl+Shift+C', () => {
-    window.close()
-  })
-
-  globalShortcut.register('CommandOrControl+Shift+S', () => {
-    window.loadFile('./index.html')
-  })
-
-  globalShortcut.register('CommandOrControl+Shift+M', () => {
-    window.hide()
-  })
-
-  globalShortcut.register('CommandOrControl+Shift+L', () => {
-    if (url) {
-      window.loadURL(url)
+  window.on('move', () => {
+    if (!moving) {
+      correctToolboxPosition()
     }
   })
 
-  globalShortcut.register('CommandOrControl+Shift+P', () => {
-    if (positioner) {
-      return clearInterval(positioner)
-    }
-    positioner = setInterval(() => {
-      const { x, y } = screen.getCursorScreenPoint()
-      const { width: pwidth, height: pheight } = screen.getPrimaryDisplay().bounds
-      const { width, height } = window.getBounds()
-
-      const top = (y - height / 2) > 5
-      const left = (x - width / 2) > 5
-      const bottom = pheight - (y + height / 2) > 5
-      const right = pwidth - (x + width / 2) > 5
-
-      if (!(top && left && bottom && right)) return
-
-      window.setPosition(x - width / 2, y - height / 2)
-    })
-  })
-
-  ipcMain.on('url', (event, arg) => {
-    if (arg) {
-      url = arg
-      window.loadURL(url)
-    }
-  })
+  window.on('close', () => app.quit())
+  toolbox.on('close', () => app.quit())
 })
+
+function correctToolboxPosition() {
+  const {x, y} = window.getBounds()
+  toolbox.setPosition(x, y - 60)
+}
+
+function loadPage(address) {
+  console.log('got the data', address)
+  if (!/(?:^https?:\/\/).+/.test(address)) {
+    address = `http://${address}`
+  }
+
+  url = address
+
+  window.loadURL(url)
+}
 
 app.on('will-quit', () => {
   globalShortcut.unregisterAll()
   tray.destroy()
 })
+
+app.commandLine.appendSwitch('high-dpi-support', 1)
+app.commandLine.appendSwitch('force-device-scale-factor', 1)
