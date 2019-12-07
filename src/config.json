@@ -1,0 +1,26 @@
+{
+  "clickThrough": false,
+  "opacity": 1,
+  "main": {
+    "width": 500,
+    "height": 400,
+    "fullscreenable": false,
+    "resizable": true,
+    "frame": false,
+    "skipTaskbar": true,
+    "webPreferences": {
+      "nodeIntegration": true
+    }
+  },
+  "toolbox": {
+    "width": 500,
+    "height": 50,
+    "fullscreenable": false,
+    "resizable": false,
+    "frame": false,
+    "skipTaskbar": true,
+    "webPreferences": {
+      "nodeIntegration": true
+    }
+  }
+}

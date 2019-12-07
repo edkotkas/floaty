@@ -2,107 +2,73 @@ const electron = require('electron')
 const {app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, screen} = electron
 const path = require('path')
 
-let url, tray, window, toolbox
+const config = require('./src/config')
 
-app.dock && app.dock.hide()
-
-const config = {
-  clickable: false,
-  opacity: 1
+const views = {
+  main: './views/main/index.html',
+  toolbox: './views/toolbox/index.html'
 }
 
+let url, tray, window, toolbox
+app.dock && app.dock.hide()
+
 function toggleClickThrough() {
-  config.clickable = !config.clickable
-  config.clickable ? toolbox.hide() : toolbox.show()
-  window.setIgnoreMouseEvents(config.clickable)
+  config.clickThrough = !config.clickThrough
+  config.clickThrough ? toolbox.hide() : toolbox.show()
+  window.setIgnoreMouseEvents(config.clickThrough)
 }
 
 const shortcuts = [
   {
+    key: 'CommandOrControl+Shift+O',
+    label: 'Open Externally',
+    click: () => url && electron.shell.openExternal(window.webContents.getURL())
+  },
+  {
     key: 'CommandOrControl+Shift+X',
-    description: 'Click-Through',
-    exec: toggleClickThrough
+    label: 'Click-Through',
+    click: toggleClickThrough
   },
   {
     key: 'CommandOrControl+Shift+C',
-    description: 'Close',
-    exec: app.quit
+    label: 'Close',
+    click: app.quit
   }
 ]
 
 const createWindow = () => {
-  window = new BrowserWindow({
-    width: 500,
-    height: 400,
-    fullscreenable: false,
-    resizable: true,
-    frame: false,
-    skipTaskbar: true,
-    webPreferences: {
-      nodeIntegration: true
-    }
-  })
-
+  window = new BrowserWindow(config.main)
   window.setAlwaysOnTop(true, "floating", 1)
   window.setVisibleOnAllWorkspaces(true)
-  window.setIgnoreMouseEvents(config.clickable)
-
-  window.loadFile('./views/main/index.html')
+  window.setIgnoreMouseEvents(config.clickThrough)
+  return window.loadFile(views.main)
 }
 
 const createToolbox = () => {
   const {x, y} = window.getBounds()
-
-  toolbox = new BrowserWindow({
-    x,
-    y: y - 60,
-    width: 500,
-    height: 50,
-    fullscreenable: false,
-    resizable: false,
-    frame: false,
-    skipTaskbar: true,
-    webPreferences: {
-      nodeIntegration: true
-    }
-  })
-
+  toolbox = new BrowserWindow({x, y: y - 60, ...config.toolbox})
   toolbox.setAlwaysOnTop(true, "floating", 1)
   toolbox.setVisibleOnAllWorkspaces(true)
-
-  toolbox.loadFile('./views/toolbox/index.html')
+  return toolbox.loadFile(views.toolbox)
 }
 
 const createTray = () => {
   tray = new Tray(path.join(__dirname, 'icon.png'))
-  tray.setToolTip(`Floaty - ${url}`)
+  tray.setToolTip(`Floaty`)
 
   tray.on('click', () => {
     window.isVisible() ? window.hide() : window.show()
-    toolbox.isVisible() ? toolbox.hide() : toolbox.show()
+
+    if (!window.isVisible()) {
+      toolbox.hide()
+    }
+
+    if (!config.clickThrough && window.isVisible()) {
+      toolbox.show()
+    }
   })
 
-  tray.setContextMenu(
-    Menu.buildFromTemplate([
-      {
-        label: 'Open Externally',
-        click: () => {
-          url && electron.shell.openExternal(url)
-        }
-      },
-      {type: 'separator'},
-      {
-        label: 'Shortcuts', submenu: shortcuts.map(x => ({
-          label: x.key, sublabel: x.description, click: x.exec
-        }))
-      },
-      {type: 'separator'},
-      {
-        label: 'Close',
-        click: () => window.close()
-      }
-    ])
-  )
+  tray.setContextMenu(Menu.buildFromTemplate(shortcuts))
 }
 
 function rotateOpacity() {
@@ -120,12 +86,14 @@ function rotateOpacity() {
 
 app.on('ready', () => {
   createTray()
-  createWindow()
-  createToolbox()
+  Promise.all([createWindow(), createToolbox()]).then(() => {
+    shortcuts.map(x => globalShortcut.register(x.key, x.click))
+    createEventListeners()
+  })
+})
 
-  shortcuts.map(x => globalShortcut.register(x.key, x.exec))
+function createEventListeners() {
   ipcMain.on('url', (event, arg) => arg && loadPage(arg))
-
   ipcMain.on('click', () => toggleClickThrough())
   ipcMain.on('opacity', () => rotateOpacity())
 
@@ -160,7 +128,7 @@ app.on('ready', () => {
 
   window.on('close', () => app.quit())
   toolbox.on('close', () => app.quit())
-})
+}
 
 function correctToolboxPosition() {
   const {x, y} = window.getBounds()
@@ -168,14 +136,13 @@ function correctToolboxPosition() {
 }
 
 function loadPage(address) {
-  console.log('got the data', address)
   if (!/(?:^https?:\/\/).+/.test(address)) {
     address = `http://${address}`
   }
 
   url = address
 
-  window.loadURL(url)
+  return window.loadURL(url)
 }
 
 app.on('will-quit', () => {
