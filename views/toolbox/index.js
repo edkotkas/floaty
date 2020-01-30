@@ -20,4 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById('click')
     .addEventListener('mouseup', () => ipcRenderer.send('click'))
+
+  document.getElementById('github')
+    .addEventListener('mouseup', () => ipcRenderer.send('github'))
 })

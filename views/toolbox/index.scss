@@ -1,5 +1,5 @@
 body {
-  color: ghostwhite;
+  color: ghostwhite !important;
   overflow: hidden;
   background: #242424;
 
@@ -33,6 +33,10 @@ body {
 
       background-color: transparent;
       border-bottom: 1px solid ghostwhite !important;
+
+      &::placeholder {
+        color: dimgray;
+      }
 
       &:focus {
         outline: none;

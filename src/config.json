@@ -1,9 +1,10 @@
 {
   "clickThrough": false,
+  "hidden": false,
   "opacity": 1,
   "main": {
     "width": 500,
-    "height": 400,
+    "height": 550,
     "fullscreenable": false,
     "resizable": true,
     "frame": false,

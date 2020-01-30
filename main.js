@@ -1,5 +1,5 @@
 const electron = require('electron')
-const {app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, screen} = electron
+const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, screen } = electron
 const path = require('path')
 
 const config = require('./src/config')
@@ -20,7 +20,7 @@ function toggleClickThrough() {
 
 const shortcuts = [
   {
-    key: 'CommandOrControl+Shift+O',
+    key: 'CommandOrControl+Shift+E',
     label: 'Open Externally',
     click: () => url && electron.shell.openExternal(window.webContents.getURL())
   },
@@ -30,13 +30,29 @@ const shortcuts = [
     click: toggleClickThrough
   },
   {
+    key: 'CommandOrControl+Shift+V',
+    label: 'Show/Hide',
+    click: toggleVisibility
+  },
+  {
     key: 'CommandOrControl+Shift+C',
     label: 'Close',
     click: app.quit
   }
 ]
 
-const createWindow = () => {
+function toggleVisibility() {
+  config.hidden = !config.hidden
+  if (window) {
+    config.hidden ? window.hide() : window.show()
+  }
+
+  if (toolbox) {
+    config.hidden ? toolbox.hide() : toolbox.show()
+  }
+}
+
+function createWindow() {
   window = new BrowserWindow(config.main)
   window.setAlwaysOnTop(true, "floating", 1)
   window.setVisibleOnAllWorkspaces(true)
@@ -44,15 +60,15 @@ const createWindow = () => {
   return window.loadFile(views.main)
 }
 
-const createToolbox = () => {
-  const {x, y} = window.getBounds()
-  toolbox = new BrowserWindow({x, y: y - 60, ...config.toolbox})
+function createToolbox() {
+  const { x, y } = window.getBounds()
+  toolbox = new BrowserWindow({ x, y: y - 60, ...config.toolbox })
   toolbox.setAlwaysOnTop(true, "floating", 1)
   toolbox.setVisibleOnAllWorkspaces(true)
   return toolbox.loadFile(views.toolbox)
 }
 
-const createTray = () => {
+function createTray() {
   tray = new Tray(path.join(__dirname, 'icon.png'))
   tray.setToolTip(`Floaty`)
 
@@ -86,23 +102,42 @@ function rotateOpacity() {
 
 app.on('ready', () => {
   createTray()
-  Promise.all([createWindow(), createToolbox()]).then(() => {
+  const windows = [createWindow, createToolbox].map(x => x())
+  Promise.all(windows).then(() => {
     shortcuts.map(x => globalShortcut.register(x.key, x.click))
     createEventListeners()
   })
 })
 
-function createEventListeners() {
-  ipcMain.on('url', (event, arg) => arg && loadPage(arg))
-  ipcMain.on('click', () => toggleClickThrough())
-  ipcMain.on('opacity', () => rotateOpacity())
+const events = [{
+  channel: 'url',
+  listener: (event, args) => args && loadPage(args)
+}, {
+  channel: 'click',
+  listener: toggleClickThrough
+}, {
+  channel: 'opacity',
+  listener: rotateOpacity
+}, {
+  channel: 'github',
+  listener: () => electron.shell.openExternal('https://github.com/edkotkas/floaty')
+}]
 
+
+function createEventListeners() {
+  events.map(e =>  ipcMain.on(e.channel, e.listener))
+  handleMoving()
+  window.on('close', () => app.quit())
+  toolbox.on('close', () => app.quit())
+}
+
+function handleMoving() {
   let moving = null
 
   ipcMain.on('move', () => {
     if (!moving) {
       return moving = setInterval(() => {
-        const {x, y} = screen.getCursorScreenPoint()
+        const { x, y } = screen.getCursorScreenPoint()
         toolbox.setBounds({
           x: x - 475,
           y: y - 26,
@@ -125,13 +160,10 @@ function createEventListeners() {
       correctToolboxPosition()
     }
   })
-
-  window.on('close', () => app.quit())
-  toolbox.on('close', () => app.quit())
 }
 
 function correctToolboxPosition() {
-  const {x, y} = window.getBounds()
+  const { x, y } = window.getBounds()
   toolbox.setPosition(x, y - 60)
 }
 
