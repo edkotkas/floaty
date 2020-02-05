@@ -7,15 +7,16 @@
   <script src="index.js"></script>
 </head>
 <body>
-<div class="url-box">
-  <label for="url"></label><input id="url" type="url" placeholder="http://example.com">
-  <img alt="go" title="Go" id="go" src="../../assets/arrow.svg"/>
-</div>
-<div class="control">
-  <img alt="opacity" title="Toggle Opacity" id="opacity" src="../../assets/bulb.svg"/>
-  <img alt="click" title="Click Through" id="click" src="../../assets/click.svg"/>
-  <img alt="move" title="Toggle Dragging" id="move" src="../../assets/location.svg"/>
-<!--  <img alt="close" title="Close" id="close" src="../../assets/close.svg"/>-->
+<div class="container">
+  <div class="address">
+    <input id="url" type="url" placeholder="http://example.com">
+  </div>
+  <div class="btn" id="go" title="Go"></div>
+  <div class="control">
+    <div class="btn"  id="opacity" title="Toggle Opacity"></div>
+    <div class="btn" id="click" title="Click Through"></div>
+    <div class="btn" id="close" title="Close"></div>
+  </div>
 </div>
 </body>
 </html>

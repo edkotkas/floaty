@@ -1,5 +1,5 @@
 const electron = require('electron')
-const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, screen } = electron
+const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain } = electron
 const path = require('path')
 
 const config = require('./src/config')
@@ -121,50 +121,19 @@ const events = [{
 }, {
   channel: 'github',
   listener: () => electron.shell.openExternal('https://github.com/edkotkas/floaty')
+}, {
+  channel: 'close',
+  listener: app.quit
 }]
-
 
 function createEventListeners() {
   events.map(e =>  ipcMain.on(e.channel, e.listener))
-  handleMoving()
+  toolbox.on('move', () => {
+    const [x, y] = toolbox.getPosition()
+    window.setPosition(x, y + 60)
+  })
   window.on('close', () => app.quit())
   toolbox.on('close', () => app.quit())
-}
-
-function handleMoving() {
-  let moving = null
-
-  ipcMain.on('move', () => {
-    if (!moving) {
-      return moving = setInterval(() => {
-        const { x, y } = screen.getCursorScreenPoint()
-        toolbox.setBounds({
-          x: x - 475,
-          y: y - 26,
-          width: 500,
-          height: 50
-        })
-
-        window.setPosition(...toolbox.getPosition())
-      }, 30)
-    }
-
-    correctToolboxPosition()
-
-    clearInterval(moving)
-    moving = null
-  })
-
-  window.on('move', () => {
-    if (!moving) {
-      correctToolboxPosition()
-    }
-  })
-}
-
-function correctToolboxPosition() {
-  const { x, y } = window.getBounds()
-  toolbox.setPosition(x, y - 60)
 }
 
 function loadPage(address) {

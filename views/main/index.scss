@@ -36,6 +36,11 @@ body {
     margin-bottom: 10px;
     border-bottom: 1px solid white;
     width: 100%;
+
+    &.big {
+      font-size: 32px;
+      border: none;
+    }
   }
 
   .shortcut {

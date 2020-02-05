@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('go')
     .addEventListener('mouseup', () => navigate())
 
-  document.getElementById('move')
-    .addEventListener('mouseup', (e) => e.preventDefault() || ipcRenderer.send('move'))
+  document.getElementById('close')
+    .addEventListener('mouseup', () => ipcRenderer.send('close'))
 
   document.getElementById('opacity')
     .addEventListener('mouseup', () => ipcRenderer.send('opacity'))
