@@ -2,27 +2,27 @@ const electron = require('electron')
 const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain } = electron
 const path = require('path')
 
-const config = require('./src/config')
+const {config, write} = require('./src/settings')
 
 const views = {
   main: './views/main/index.html',
-  toolbox: './views/toolbox/index.html'
+  navigation: './views/navigation/index.html'
 }
 
-let url, tray, window, toolbox
+let url, tray, main, navigation
 app.dock && app.dock.hide()
 
 function toggleClickThrough() {
   config.clickThrough = !config.clickThrough
-  config.clickThrough ? toolbox.hide() : toolbox.show()
-  window.setIgnoreMouseEvents(config.clickThrough)
+  config.clickThrough ? navigation.hide() : navigation.show()
+  main.setIgnoreMouseEvents(config.clickThrough)
 }
 
 const shortcuts = [
   {
     key: 'CommandOrControl+Shift+E',
     label: 'Open Externally',
-    click: () => url && electron.shell.openExternal(window.webContents.getURL())
+    click: () => url && electron.shell.openExternal(main.webContents.getURL())
   },
   {
     key: 'CommandOrControl+Shift+X',
@@ -43,29 +43,29 @@ const shortcuts = [
 
 function toggleVisibility() {
   config.hidden = !config.hidden
-  if (window) {
-    config.hidden ? window.hide() : window.show()
+  if (main) {
+    config.hidden ? main.hide() : main.show()
   }
 
-  if (toolbox) {
-    config.hidden ? toolbox.hide() : toolbox.show()
+  if (navigation) {
+    config.hidden ? navigation.hide() : navigation.show()
   }
 }
 
 function createWindow() {
-  window = new BrowserWindow(config.main)
-  window.setAlwaysOnTop(true, "floating", 1)
-  window.setVisibleOnAllWorkspaces(true)
-  window.setIgnoreMouseEvents(config.clickThrough)
-  return window.loadFile(views.main)
+  main = new BrowserWindow(config.main)
+  main.setAlwaysOnTop(true, "floating", 1)
+  main.setVisibleOnAllWorkspaces(true)
+  main.setIgnoreMouseEvents(config.clickThrough)
+  return main.loadFile(views.main)
 }
 
-function createToolbox() {
-  const { x, y } = window.getBounds()
-  toolbox = new BrowserWindow({ x, y: y - 60, ...config.toolbox })
-  toolbox.setAlwaysOnTop(true, "floating", 1)
-  toolbox.setVisibleOnAllWorkspaces(true)
-  return toolbox.loadFile(views.toolbox)
+function createNavigation() {
+  const { x, y } = main.getBounds()
+  navigation = new BrowserWindow(Object.assign({x, y: y - 60}, { ...config.navigation }))
+  navigation.setAlwaysOnTop(true, "floating", 1)
+  navigation.setVisibleOnAllWorkspaces(true)
+  return navigation.loadFile(views.navigation)
 }
 
 function createTray() {
@@ -73,14 +73,14 @@ function createTray() {
   tray.setToolTip(`Floaty`)
 
   tray.on('click', () => {
-    window.isVisible() ? window.hide() : window.show()
+    main.isVisible() ? main.hide() : main.show()
 
-    if (!window.isVisible()) {
-      toolbox.hide()
+    if (!main.isVisible()) {
+      navigation.hide()
     }
 
-    if (!config.clickThrough && window.isVisible()) {
-      toolbox.show()
+    if (!config.clickThrough && main.isVisible()) {
+      navigation.show()
     }
   })
 
@@ -97,16 +97,16 @@ function rotateOpacity() {
   }
 
   config.opacity = presets[current]
-  window.setOpacity(config.opacity)
+  main.setOpacity(config.opacity)
 }
 
 app.on('ready', () => {
   createTray()
-  const windows = [createWindow, createToolbox].map(x => x())
+  const windows = [createWindow, createNavigation].map(x => x())
   Promise.all(windows).then(() => {
     shortcuts.map(x => globalShortcut.register(x.key, x.click))
     createEventListeners()
-  })
+  }).catch(err => console.error('err', err))
 })
 
 const events = [{
@@ -124,16 +124,36 @@ const events = [{
 }, {
   channel: 'close',
   listener: app.quit
+}, {
+  channel: 'back',
+  listener: () => main.webContents.goBack()
+}, {
+  channel: 'forward',
+  listener: () => main.webContents.goForward()
+}, {
+  channel: 'refresh',
+  listener:() => main.webContents.reload()
 }]
 
 function createEventListeners() {
   events.map(e =>  ipcMain.on(e.channel, e.listener))
-  toolbox.on('move', () => {
-    const [x, y] = toolbox.getPosition()
-    window.setPosition(x, y + 60)
+  navigation.on('move', () => {
+    const [x, y] = navigation.getPosition()
+    main.setPosition(x, y + 60)
   })
-  window.on('close', () => app.quit())
-  toolbox.on('close', () => app.quit())
+
+  main.on('close', beforeClose)
+  navigation.on('close', beforeClose)
+}
+
+function beforeClose() {
+  Object.assign(config.main, main.getBounds())
+  console.log(main.getOpacity())
+  Object.assign(config.navigation, navigation.getBounds())
+
+  write()
+
+  app.quit()
 }
 
 function loadPage(address) {
@@ -143,12 +163,12 @@ function loadPage(address) {
 
   url = address
 
-  return window.loadURL(url)
+  return main.loadURL(url)
 }
 
 app.on('will-quit', () => {
   globalShortcut.unregisterAll()
-  tray.destroy()
+  tray && tray.destroy()
 })
 
 app.commandLine.appendSwitch('high-dpi-support', 1)

@@ -4,14 +4,20 @@
   <meta charset="UTF-8">
   <title>Tools</title>
   <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="../styles/main.css">
   <script src="index.js"></script>
 </head>
 <body>
 <div class="container">
+  <div class="nav">
+    <div class="btn" id="back" title="Back"></div>
+    <div class="btn" id="forward" title="Forward"></div>
+    <div class="btn" id="refresh" title="Refresh"></div>
+  </div>
   <div class="address">
     <input id="url" type="url" placeholder="http://example.com">
+    <div class="btn" id="go" title="Go"></div>
   </div>
-  <div class="btn" id="go" title="Go"></div>
   <div class="control">
     <div class="btn"  id="opacity" title="Toggle Opacity"></div>
     <div class="btn" id="click" title="Click Through"></div>
@@ -20,3 +26,4 @@
 </div>
 </body>
 </html>
+<!--'close', 'opacity', 'click', 'github', 'back', 'forward', 'refresh'-->

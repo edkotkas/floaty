@@ -1,34 +1,34 @@
 body {
+  overflow: hidden;
 
   .container {
     height: 50px;
+    transform: translateY(12%);
     -webkit-app-region: drag;
   }
 
   color: ghostwhite !important;
-  overflow: hidden;
   background: #242424;
   margin: 0;
   font-family: 'Roboto', sans-serif;
 
   .address {
-    float: left;
-    -webkit-app-region: no-drag;
+    text-align: center;
     user-select: none;
 
     input {
+      -webkit-app-region: no-drag;
+
       width: 260px;
-      height: 28px;
+      height: 20px;
       margin-top: 10px;
-      margin-left: 10px;
-      margin-right: 5px;
-      padding: 1px;
-      font-size: medium;
+      padding: 1px 6px;
+      font-size: small;
       border: none;
       color: ghostwhite;
 
-      background-color: transparent;
-      border-bottom: 1px solid ghostwhite !important;
+      background-color: dimgray;
+      border-radius: 10px;
 
       &::placeholder {
         color: dimgray;
@@ -37,9 +37,25 @@ body {
       &:focus {
         outline: none;
       }
+    }
 
-      &:hover {
-        opacity: 0.8;
+    .btn {
+      margin-left: -45px;
+      transform: translateY(25%);
+      width: 10px;
+      height: 10px;
+      padding: 5px 20px 5px 5px;
+    }
+  }
+
+  .nav {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    .btn {
+      &:first-child {
+        margin-left: 10px;
       }
     }
   }
@@ -48,14 +64,10 @@ body {
     -webkit-app-region: no-drag;
     user-select: none;
 
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
 
     padding: 0 3px;
-
-    &:last-child {
-      margin-right: 10px;
-    }
 
     transform: translateY(50%);
     display: inline-block;
@@ -64,6 +76,9 @@ body {
     background-repeat: no-repeat;
     background-position: center;
 
+    &#back { background-image: url('../../assets/chevron_left.svg') }
+    &#forward { background-image: url('../../assets/chevron_right.svg') }
+    &#refresh { background-image: url('../../assets/refresh.svg') }
     &#go { background-image: url('../../assets/arrow.svg') }
     &#opacity { background-image: url('../../assets/bulb.svg') }
     &#click { background-image: url('../../assets/touch_app.svg') }
@@ -74,14 +89,24 @@ body {
     }
 
     img {
-      width: 24px;
-      height: 24px;
+      width: 100%;
+      height: 100%;
       margin: 5px;
     }
   }
 
   .control {
-    float: right;
+    position: absolute;
+    right: 0;
+    top: 0;
+    .btn {
+      width: 18px;
+      height: 18px;
+
+      &:last-child {
+        margin-right: 10px;
+      }
+    }
   }
 }
 
