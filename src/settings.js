@@ -4,9 +4,9 @@ const homedir = require('os').homedir()
 
 const defaultConfig = require('./config')
 
-let aliaFileName = '.floaty.json'
+let fileName = '.floaty.json'
 
-const configPath = path.join(homedir, aliaFileName)
+const configPath = path.join(homedir, fileName)
 
 let config
 if (fs.existsSync(configPath)) {
