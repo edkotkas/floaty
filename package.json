@@ -15,7 +15,7 @@
   "author": "Eduard Kotkas",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^7.2.1",
+    "electron": "^7.2.4",
     "electron-builder": "^21.2.0",
     "node-sass": "^4.13.1"
   },
