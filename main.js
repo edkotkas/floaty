@@ -2,7 +2,10 @@ const electron = require('electron')
 const { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain } = electron
 const path = require('path')
 
-const {config, write} = require('./src/settings')
+const Store = require('electron-store')
+const store = new Store()
+
+const config = store.get('config') || require('./src/config')
 
 const views = {
   main: './views/main/index.html',
@@ -35,7 +38,7 @@ const shortcuts = [
     click: toggleVisibility
   },
   {
-    key: 'CommandOrControl+Shift+C',
+    key: 'CommandOrControl+Shift+Q',
     label: 'Close',
     click: app.quit
   }
@@ -54,7 +57,7 @@ function toggleVisibility() {
 
 function createWindow() {
   main = new BrowserWindow(config.main)
-  main.setAlwaysOnTop(true, "floating", 1)
+  main.setAlwaysOnTop(true, "floating", 10)
   main.setVisibleOnAllWorkspaces(true)
   main.setIgnoreMouseEvents(config.clickThrough)
   return main.loadFile(views.main)
@@ -62,8 +65,8 @@ function createWindow() {
 
 function createNavigation() {
   const { x, y } = main.getBounds()
-  navigation = new BrowserWindow(Object.assign({x, y: y - 60}, { ...config.navigation }))
-  navigation.setAlwaysOnTop(true, "floating", 1)
+  navigation = new BrowserWindow(Object.assign({ x, y: y - 60 }, { ...config.navigation }))
+  navigation.setAlwaysOnTop(true, "floating", 10)
   navigation.setVisibleOnAllWorkspaces(true)
   return navigation.loadFile(views.navigation)
 }
@@ -100,15 +103,6 @@ function rotateOpacity() {
   main.setOpacity(config.opacity)
 }
 
-app.on('ready', () => {
-  createTray()
-  const windows = [createWindow, createNavigation].map(x => x())
-  Promise.all(windows).then(() => {
-    shortcuts.map(x => globalShortcut.register(x.key, x.click))
-    createEventListeners()
-  }).catch(err => console.error('err', err))
-})
-
 const events = [{
   channel: 'url',
   listener: (event, args) => args && loadPage(args)
@@ -122,7 +116,7 @@ const events = [{
   channel: 'github',
   listener: () => electron.shell.openExternal('https://github.com/edkotkas/floaty')
 }, {
-  channel: 'close',
+  channel: 'quit',
   listener: app.quit
 }, {
   channel: 'back',
@@ -132,14 +126,28 @@ const events = [{
   listener: () => main.webContents.goForward()
 }, {
   channel: 'refresh',
-  listener:() => main.webContents.reload()
+  listener: () => main.webContents.reload()
 }]
 
 function createEventListeners() {
-  events.map(e =>  ipcMain.on(e.channel, e.listener))
+  let resizing = false
+  let resizeTimeout
+  events.map(e => ipcMain.on(...Object.values(e)))
+
   navigation.on('move', () => {
-    const [x, y] = navigation.getPosition()
-    main.setPosition(x, y + 60)
+    if (!resizing) {
+      const [x, y] = navigation.getPosition()
+      main.setPosition(x, y + 60)
+    }
+  })
+
+  main.on('resize', () => {
+    resizing = true
+    const [x, y] = main.getPosition()
+    navigation.setPosition(x, y - 60)
+    resizeTimeout = setTimeout(() => {
+      resizing = false
+    }, 100)
   })
 
   main.on('close', beforeClose)
@@ -151,7 +159,7 @@ function beforeClose() {
   console.log(main.getOpacity())
   Object.assign(config.navigation, navigation.getBounds())
 
-  write()
+  store.set('config', config)
 
   app.quit()
 }
@@ -165,6 +173,15 @@ function loadPage(address) {
 
   return main.loadURL(url)
 }
+
+app.on('ready', () => {
+  createTray()
+  const windows = [createWindow, createNavigation].map(x => x())
+  Promise.all(windows).then(() => {
+    shortcuts.map(x => globalShortcut.register(x.key, x.click))
+    createEventListeners()
+  }).catch(err => console.error('err', err))
+})
 
 app.on('will-quit', () => {
   globalShortcut.unregisterAll()

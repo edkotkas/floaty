@@ -9,21 +9,30 @@
 </head>
 <body>
 <div class="container">
-  <div class="nav">
-    <div class="btn" id="back" title="Back"></div>
-    <div class="btn" id="forward" title="Forward"></div>
-    <div class="btn" id="refresh" title="Refresh"></div>
+  <div id="nav-container">
+    <div class="nav">
+      <div class="btn" id="back" title="Back"></div>
+      <div class="btn" id="forward" title="Forward"></div>
+      <div class="btn" id="refresh" title="Refresh"></div>
+    </div>
+    <div class="address">
+      <input id="url" type="url" placeholder="http://example.com">
+      <div class="btn" id="go" title="Go"></div>
+    </div>
   </div>
-  <div class="address">
-    <input id="url" type="url" placeholder="http://example.com">
-    <div class="btn" id="go" title="Go"></div>
+  <div id="options-container">
+    <div class="nav">
+      <div class="btn"  id="opacity" title="Cycle through stages of opacity"></div>
+      <div class="btn"  id="click" title="Disable Mouse Events on the Window"></div>
+      <div class="btn"  id="external" title="Open Current Page in Browser"></div>
+      <div class="btn"  id="history" title="Open History View"></div>
+      <div class="btn"  id="favourites" title="Open Favourites View"></div>
+    </div>
   </div>
   <div class="control">
-    <div class="btn"  id="opacity" title="Toggle Opacity"></div>
-    <div class="btn" id="click" title="Click Through"></div>
-    <div class="btn" id="close" title="Close"></div>
+    <div class="btn" id="options" title="Options"></div>
+    <div class="btn" id="quit" title="Quit"></div>
   </div>
 </div>
 </body>
 </html>
-<!--'close', 'opacity', 'click', 'github', 'back', 'forward', 'refresh'-->

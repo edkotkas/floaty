@@ -1,10 +1,10 @@
 body {
-  overflow: hidden;
+  //overflow: hidden;
 
   .container {
     height: 50px;
-    transform: translateY(12%);
     -webkit-app-region: drag;
+    overflow: hidden;
   }
 
   color: ghostwhite !important;
@@ -15,11 +15,13 @@ body {
   .address {
     text-align: center;
     user-select: none;
+    padding-top: 4px;
+    margin-left: 25px;
 
     input {
       -webkit-app-region: no-drag;
 
-      width: 260px;
+      width: 300px;
       height: 20px;
       margin-top: 10px;
       padding: 1px 6px;
@@ -51,7 +53,7 @@ body {
   .nav {
     position: absolute;
     left: 0;
-    top: 0;
+    top: 6px;
 
     .btn {
       &:first-child {
@@ -79,10 +81,11 @@ body {
     &#back { background-image: url('../../assets/chevron_left.svg') }
     &#forward { background-image: url('../../assets/chevron_right.svg') }
     &#refresh { background-image: url('../../assets/refresh.svg') }
-    &#go { background-image: url('../../assets/arrow.svg') }
+    &#go { background-image: url('../../assets/chevron_right_black.svg') }
+    &#options { background-image: url('../../assets/more_vert.svg') }
     &#opacity { background-image: url('../../assets/bulb.svg') }
     &#click { background-image: url('../../assets/touch_app.svg') }
-    &#close { background-image: url('../../assets/close.svg') }
+    &#quit { background-image: url('../../assets/close.svg') }
 
     &:hover {
       opacity: 0.5;
@@ -98,7 +101,7 @@ body {
   .control {
     position: absolute;
     right: 0;
-    top: 0;
+    top: 6px;
     .btn {
       width: 18px;
       height: 18px;
@@ -108,5 +111,8 @@ body {
       }
     }
   }
-}
 
+  #options-container {
+    display: none;
+  }
+}

@@ -15,11 +15,13 @@
   "author": "Eduard Kotkas",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^7.1.11",
+    "electron": "^7.2.1",
     "electron-builder": "^21.2.0",
     "node-sass": "^4.13.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "electron-store": "^5.1.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/edkotkas/floaty.git"

@@ -11,7 +11,37 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('go')
     .addEventListener('mouseup', () => navigate())
 
-  const buttons = ['close', 'opacity', 'click', 'back', 'forward', 'refresh']
+  document.getElementById('options')
+    .addEventListener('mouseup', () => {
+      const nav = document.getElementById('nav-container')
+      const opts = document.getElementById('options-container')
+
+      const toggleVisible = (item) => {
+        if (window.getComputedStyle(item).display === 'none') {
+          item.style.display = 'block'
+        } else {
+          item.style.display = 'none'
+        }
+      }
+
+      toggleVisible(nav)
+      toggleVisible(opts)
+
+      // optsClasses.hidden = navClasses.hidden
+      // if (navClasses.contains('up')) {
+      //   navClasses.remove('up')
+      // } else {
+      //   navClasses.add('up')
+      // }
+      //
+      // if (optsClasses.contains('up')) {
+      //   optsClasses.remove('up')
+      // } else {
+      //   optsClasses.add('up')
+      // }
+    })
+
+  const buttons = ['quit', 'opacity', 'click', 'back', 'forward', 'refresh']
   for (let btn of buttons) {
     document.getElementById(btn).addEventListener('mouseup', () => ipcRenderer.send(btn, true))
   }
