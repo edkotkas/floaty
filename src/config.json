@@ -2,6 +2,7 @@
   "clickThrough": false,
   "hidden": false,
   "opacity": 1,
+  "adblock": false,
   "main": {
     "width": 500,
     "height": 550,

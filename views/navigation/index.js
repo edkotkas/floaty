@@ -26,22 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
       toggleVisible(nav)
       toggleVisible(opts)
-
-      // optsClasses.hidden = navClasses.hidden
-      // if (navClasses.contains('up')) {
-      //   navClasses.remove('up')
-      // } else {
-      //   navClasses.add('up')
-      // }
-      //
-      // if (optsClasses.contains('up')) {
-      //   optsClasses.remove('up')
-      // } else {
-      //   optsClasses.add('up')
-      // }
     })
 
-  const buttons = ['quit', 'opacity', 'click', 'back', 'forward', 'refresh']
+  const btnElements = document.getElementsByClassName('btn')
+  const buttons = Array.from(btnElements).map(btn => btn.id)
   for (let btn of buttons) {
     document.getElementById(btn).addEventListener('mouseup', () => ipcRenderer.send(btn, true))
   }

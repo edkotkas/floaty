@@ -21,10 +21,10 @@ body {
     input {
       -webkit-app-region: no-drag;
 
-      width: 300px;
+      width: 270px;
       height: 20px;
       margin-top: 10px;
-      padding: 1px 6px;
+      padding: 1px 35px 1px 10px;
       font-size: small;
       border: none;
       color: ghostwhite;
@@ -42,11 +42,18 @@ body {
     }
 
     .btn {
-      margin-left: -45px;
       transform: translateY(25%);
       width: 10px;
       height: 10px;
       padding: 5px 20px 5px 5px;
+
+      &#favourite {
+        margin-right: -45px;
+      }
+
+      &#go {
+        margin-left: -45px;
+      }
     }
   }
 
@@ -65,6 +72,7 @@ body {
   .btn {
     -webkit-app-region: no-drag;
     user-select: none;
+    cursor: pointer;
 
     width: 20px;
     height: 20px;
@@ -79,13 +87,17 @@ body {
     background-position: center;
 
     &#back { background-image: url('../../assets/chevron_left.svg') }
-    &#forward { background-image: url('../../assets/chevron_right.svg') }
+    &#forward, &#go { background-image: url('../../assets/chevron_right.svg') }
     &#refresh { background-image: url('../../assets/refresh.svg') }
-    &#go { background-image: url('../../assets/chevron_right_black.svg') }
     &#options { background-image: url('../../assets/more_vert.svg') }
     &#opacity { background-image: url('../../assets/bulb.svg') }
     &#click { background-image: url('../../assets/touch_app.svg') }
     &#quit { background-image: url('../../assets/close.svg') }
+    &#external { background-image: url('../../assets/open_in_new.svg') }
+    &#history { background-image: url('../../assets/history.svg') }
+    &#favourites, &#favourite { background-image: url('../../assets/star.svg') }
+    &#adblock { background-image: url('../../assets/monetization.svg') }
+    &#help { background-image: url('../../assets/help_outline.svg') }
 
     &:hover {
       opacity: 0.5;
