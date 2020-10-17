@@ -8,7 +8,6 @@ function setup({ adblock, config, views: { main } }) {
     .fromPrebuiltAdsAndTracking(fetch)
     .then((blocker) => {
       adblock.blocker = blocker
-      console.log('blocker state', adblock.state)
       if (adblock.state) {
         blocker.enableBlockingInSession(adblock.session)
       }

@@ -1,3 +1,5 @@
+const { clipboard, shell } = require('electron')
+
 function loadPage(address, context) {
   if (!/(?:^https?:\/\/).+/.test(address)) {
     address = `http://${address}`
@@ -6,6 +8,10 @@ function loadPage(address, context) {
   context.url = address
 
   return context.views.main.loadURL(context.url)
+    .then(data => {
+      context.views.nav.webContents.send('will-navigate',  context.url)
+      return data
+    })
 }
 
 function rotateOpacity({ config, views }) {
@@ -58,6 +64,11 @@ function toggleMute({ config, views }) {
   views.main.webContents.audioMuted = config.mute
 }
 
+function openFromClipBoard(context) {
+  const copy = clipboard.readText()
+  loadPage(copy, context)
+}
+
 function operations(context) {
   return [
     {
@@ -101,6 +112,14 @@ function operations(context) {
     },
     {
       shortcut: {
+        key: 'CommandOrControl+Shift+G',
+        label: 'Open URL From Clipboard'
+      },
+      channel: 'paste',
+      event: () => openFromClipBoard(context)
+    },
+    {
+      shortcut: {
         key: 'CommandOrControl+Shift+Q',
         label: 'Close'
       },
@@ -117,7 +136,7 @@ function operations(context) {
     },
     {
       channel: 'github',
-      event: () => context.system.shell.openExternal('https://github.com/edkotkas')
+      event: () => shell.openExternal('https://github.com/edkotkas')
     },
     {
       channel: 'back',
@@ -133,7 +152,7 @@ function operations(context) {
     },
     {
       channel: 'help',
-      event: () => context.system.shell.openExternal('https://github.com/edkotkas/floaty/blob/master/README.md')
+      event: () => shell.openExternal('https://github.com/edkotkas/floaty/blob/master/README.md')
     }
   ]
 }

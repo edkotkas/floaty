@@ -6,7 +6,8 @@ function navigate() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('url')
+  const urlInput = document.getElementById('url')
+  urlInput
     .addEventListener('keyup', (e) => e.key === 'Enter' && navigate())
   document.getElementById('go')
     .addEventListener('mouseup', () => navigate())
@@ -33,4 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
   for (let btn of buttons) {
     document.getElementById(btn).addEventListener('mouseup', () => ipcRenderer.send(btn, true))
   }
+
+  ipcRenderer.on('will-navigate', (event, args) => {
+    urlInput.setAttribute('value', args)
+  })
 })

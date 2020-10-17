@@ -10,7 +10,7 @@ const Store = require('electron-store')
 const store = new Store()
 
 const context = {
-  system: { app, shell, store, adblock },
+  system: { app, adblock },
   config: store.get('config') || require('./src/config'),
   url: null,
   tray: null,
@@ -54,6 +54,10 @@ app.on('ready', () => {
         .map(s => globalShortcut.register(...Object.values(s)))
 
       events.map(e => ipcMain.on(...Object.values(e)))
+
+      context.views.main.webContents.on('will-navigate', (event, url) => {
+        context.views.nav.webContents.send('will-navigate',  url)
+      })
 
       adblock.setup(context)
     }).catch(err => console.error('err', err))
