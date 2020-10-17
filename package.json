@@ -17,7 +17,7 @@
   "devDependencies": {
     "electron": "^7.2.4",
     "electron-builder": "^21.2.0",
-    "node-sass": "^4.13.1"
+    "node-sass": "^4.14.1"
   },
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.18.3",
