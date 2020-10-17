@@ -34,6 +34,7 @@ function quit() {
   Object.assign(config.main, views.main.getBounds())
   Object.assign(config.navigation, views.nav.getBounds())
   config.adblock = blocker.isBlockingEnabled(session)
+  config.mute = views.main.isAudioMuted()
   store.set('config', config)
 
   app.quit()

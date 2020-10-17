@@ -53,6 +53,11 @@ function openExternal({ url, system: { shell }, views: { main } }) {
   }
 }
 
+function toggleMute({ config, views }) {
+  config.mute = !config.mute
+  views.main.webContents.audioMuted = config.mute
+}
+
 function operations(context) {
   return [
     {
@@ -85,6 +90,14 @@ function operations(context) {
       },
       channel: 'adblock',
       event: () => context.system.adblock.toggle(context)
+    },
+    {
+      shortcut: {
+        key: 'CommandOrControl+Shift+M',
+        label: 'Toggle Sound'
+      },
+      channel: 'mute',
+      event: () => toggleMute(context)
     },
     {
       shortcut: {
