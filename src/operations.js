@@ -112,7 +112,7 @@ function operations(context) {
     },
     {
       shortcut: {
-        key: 'CommandOrControl+Shift+G',
+        key: 'CommandOrControl+Shift+A',
         label: 'Open URL From Clipboard'
       },
       channel: 'paste',
@@ -149,6 +149,15 @@ function operations(context) {
     {
       channel: 'refresh',
       event: () => context.views.main.webContents.reload()
+    },
+    {
+      channel: 'reset',
+      event: () => {
+        const {system: {store, app }} = context
+        store.clear()
+        app.relaunch()
+        app.exit()
+      }
     },
     {
       channel: 'help',

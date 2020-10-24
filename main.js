@@ -1,5 +1,5 @@
 const electron = require('electron')
-const { app, globalShortcut, ipcMain, shell } = electron
+const { app, globalShortcut, ipcMain } = electron
 
 const windows = require('./src/windows')
 const adblock = require('./src/adblock')
@@ -9,9 +9,11 @@ const tray = require('./src/tray')
 const Store = require('electron-store')
 const store = new Store()
 
+const config = store.get('config', require('./src/config'))
+
 const context = {
-  system: { app, adblock },
-  config: store.get('config') || require('./src/config'),
+  system: { app, adblock, store },
+  config,
   url: null,
   tray: null,
   adblock: {
@@ -32,11 +34,10 @@ const context = {
 function quit() {
   const { config, views, adblock: { blocker, session } } = context
   Object.assign(config.main, views.main.getBounds())
-  Object.assign(config.navigation, views.nav.getBounds())
+  Object.assign(config.nav, views.nav.getBounds())
   config.adblock = blocker.isBlockingEnabled(session)
   config.mute = views.main.isAudioMuted()
   store.set('config', config)
-
   app.quit()
 }
 
@@ -46,6 +47,7 @@ if (app.dock) {
 
 app.on('ready', () => {
   const { events, shortcuts } = operations.setup(context)
+  events.map(e => ipcMain.on(...Object.values(e)))
   tray.create(shortcuts, context)
   windows.setup(context)
     .then(() => {
@@ -53,11 +55,7 @@ app.on('ready', () => {
         .map(({ key, click }) => ({ key, click }))
         .map(s => globalShortcut.register(...Object.values(s)))
 
-      events.map(e => ipcMain.on(...Object.values(e)))
 
-      context.views.main.webContents.on('will-navigate', (event, url) => {
-        context.views.nav.webContents.send('will-navigate',  url)
-      })
 
       adblock.setup(context)
     }).catch(err => console.error('err', err))

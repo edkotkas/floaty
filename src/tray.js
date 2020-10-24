@@ -2,7 +2,6 @@ const path = require('path')
 const electron = require('electron')
 const { Tray, Menu } = electron
 
-
 function create(shortcuts, context) {
   context.tray = new Tray(path.join(__dirname, '..', 'icon.png'))
 
