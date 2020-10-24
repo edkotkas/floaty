@@ -49,7 +49,7 @@ function setup(context) {
   return Promise.all(windows)
     .then(windows => {
       const { views, quit } = context
-      Object.values(views).map(view => {
+      Object.values(views).forEach(view => {
         context.forceTopMost = setInterval(() => {
           view.moveTop()
         }, 10000)

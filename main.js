@@ -9,11 +9,9 @@ const tray = require('./src/tray')
 const Store = require('electron-store')
 const store = new Store()
 
-const config = store.get('config', require('./src/config'))
-
 const context = {
   system: { app, adblock, store },
-  config,
+  config: store.get('config', require('./src/config')),
   url: null,
   tray: null,
   adblock: {
@@ -28,17 +26,19 @@ const context = {
     main: './views/main/index.html',
     nav: './views/navigation/index.html'
   },
-  quit
+  quit: () => {
+    updateConfig()
+    app.exit()
+  }
 }
 
-function quit() {
+function updateConfig() {
   const { config, views, adblock: { blocker, session } } = context
   Object.assign(config.main, views.main.getBounds())
   Object.assign(config.nav, views.nav.getBounds())
   config.adblock = blocker.isBlockingEnabled(session)
-  config.mute = views.main.isAudioMuted()
+  config.mute = views.main.webContents.isAudioMuted()
   store.set('config', config)
-  app.quit()
 }
 
 if (app.dock) {
@@ -51,12 +51,9 @@ app.on('ready', () => {
   tray.create(shortcuts, context)
   windows.setup(context)
     .then(() => {
-      shortcuts
-        .map(({ key, click }) => ({ key, click }))
-        .map(s => globalShortcut.register(...Object.values(s)))
-
-
-
+      shortcuts.forEach(({ key, click }) => {
+        globalShortcut.register(...Object.values({ key, click }))
+      })
       adblock.setup(context)
     }).catch(err => console.error('err', err))
 })
