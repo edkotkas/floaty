@@ -1,0 +1,39 @@
+// http://jsfiddle.net/V8jmR/
+
+.container {
+  position: relative;
+  height: 100%;
+}
+
+.container:before, .container:after, .container > :first-child:before, .container > :first-child:after {
+  position: absolute;
+  content: ' ';
+  width: 20px;
+  height: 20px;
+  border-color: rgba(whitesmoke, 0.3);
+  border-style: solid;
+}
+
+.container:before {
+  top: 0;
+  left: 0;
+  border-width: 1px 0 0 1px
+}
+
+.container:after {
+  top: 0;
+  right: 0;
+  border-width: 1px 1px 0 0
+}
+
+.container > :first-child:before {
+  bottom: 0;
+  right: 0;
+  border-width: 0 1px 1px 0
+}
+
+.container > :first-child:after {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 1px 1px
+}

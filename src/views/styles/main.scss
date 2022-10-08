@@ -1,0 +1,91 @@
+body {
+  font-size: 14px;
+  color: ghostwhite;
+  font-family: "Open Sans", sans-serif;
+  background: #242424;
+
+  .container {
+    overflow: hidden;
+  }
+
+
+  .hidden {
+    overflow: hidden;
+    width: 0;
+    //display: none !important;
+  }
+
+  .title {
+    padding: 8px;
+    width: 100%;
+    font-size: 24px;
+  }
+
+  .btn {
+    -webkit-app-region: no-drag;
+    user-select: none;
+    cursor: pointer;
+
+    width: 20px;
+    height: 20px;
+
+    margin: 0 3px;
+
+    transform: translateY(50%);
+    display: inline-block;
+
+    background-color: white;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+
+    &#back { -webkit-mask-image: url('../../../assets/chevron_left.svg') }
+    &#forward, &#go { -webkit-mask-image: url('../../../assets/chevron_right.svg') }
+    &#refresh { -webkit-mask-image: url('../../../assets/refresh.svg') }
+    &#options { -webkit-mask-image: url('../../../assets/more_vert.svg') }
+    &#opacity { -webkit-mask-image: url('../../../assets/bulb.svg') }
+    &#clickThrough { -webkit-mask-image: url('../../../assets/touch_app.svg') }
+    &#quit { -webkit-mask-image: url('../../../assets/close.svg') }
+    &#external { -webkit-mask-image: url('../../../assets/open_in_new.svg') }
+    &#history { -webkit-mask-image: url('../../../assets/history.svg') }
+    &#favourites, &#favourite { -webkit-mask-image: url('../../../assets/star.svg') }
+    &#adBlock { -webkit-mask-image: url('../../../assets/monetization.svg') }
+    &#mute { -webkit-mask-image: url('../../../assets/volume_mute.svg') }
+    &#paste { -webkit-mask-image: url('../../../assets/content_paste.svg') }
+    &#reset { -webkit-mask-image: url('../../../assets/delete_sweep.svg') }
+    &#help { -webkit-mask-image: url('../../../assets/help_outline.svg') }
+    &#bug { -webkit-mask-image: url('../../../assets/bug_report.svg') }
+    &#settings { -webkit-mask-image: url('../../../assets/settings.svg') }
+
+    &:hover {
+      opacity: 0.5;
+    }
+
+    &.active {
+      background-color: deeppink;
+    }
+  }
+
+
+  .shortcut {
+    text-align: center;
+    font-weight: bolder;
+
+    .key {
+      display: inline;
+      text-align: center;
+      border: 2px solid white;
+      padding: 6px 12px;
+      margin: 2px;
+      border-radius: 5px;
+      font-size: 10px;
+    }
+
+    padding-top: 10px;
+    padding-bottom: 20px;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid white;
+    }
+  }
+}

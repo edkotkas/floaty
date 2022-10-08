@@ -1,39 +1,101 @@
 {
   "clickThrough": false,
-  "hidden": false,
+  "visibility": false,
   "opacity": 1,
-  "adblock": false,
-  "main": {
-    "width": 500,
-    "height": 550,
-    "fullscreenable": false,
-    "resizable": true,
-    "frame": false,
-    "skipTaskbar": true,
-    "webPreferences": {
-      "nodeIntegration": true
+  "adBlock": false,
+  "mute": false,
+  "windows": {
+    "main": {
+      "options": {
+        "width": 500,
+        "height": 550,
+        "resizable": true
+      }
+    },
+    "navigation": {
+      "options": {
+        "width": 500,
+        "height": 50,
+        "resizable": false
+      }
+    },
+    "settings": {
+      "options": {
+        "width": 500,
+        "height": 550,
+        "resizable": false,
+        "show": false
+      }
     }
   },
-  "nav": {
-    "width": 500,
-    "height": 50,
-    "fullscreenable": false,
-    "resizable": false,
-    "frame": false,
-    "skipTaskbar": true,
-    "webPreferences": {
-      "nodeIntegration": true
+  "actions": [
+    {
+      "key": "CommandOrControl+Shift+V",
+      "label": "Show/Hide",
+      "action": "visibility"
+    },
+    {
+      "key": "CommandOrControl+Shift+X",
+      "label": "Click-Through",
+      "action": "clickThrough"
+    },
+    {
+      "key": "CommandOrControl+Shift+E",
+      "label": "Open Externally",
+      "action": "external"
+    },
+    {
+      "key": "CommandOrControl+Shift+M",
+      "label": "Toggle Sound",
+      "action": "mute"
+    },
+    {
+      "key": "CommandOrControl+Shift+A",
+      "label": "Open URL From Clipboard",
+      "action": "paste"
+    },
+    {
+      "key": "CommandOrControl+Shift+T",
+      "label": "Move to Top",
+      "action": "top"
+    },
+    {
+      "key": "CommandOrControl+Shift+Q",
+      "label": "Close",
+      "action": "quit"
+    },
+    {
+      "action": "back"
+    },
+    {
+      "action": "forward"
+    },
+    {
+      "action": "refresh"
+    },
+    {
+      "action": "opacity"
+    },
+    {
+      "action": "adBlock"
+    },
+    {
+      "action": "bug"
+    },
+    {
+      "action": "settings"
+    },
+    {
+      "action": "reset"
+    },
+    {
+      "action": "help"
+    },
+    {
+      "action": "url"
+    },
+    {
+      "action": "retryHttp"
     }
-  },
-  "settings": {
-    "width": 500,
-    "height": 550,
-    "fullscreenable": false,
-    "resizable": false,
-    "frame": true,
-    "skipTaskbar": true,
-    "webPreferences": {
-      "nodeIntegration": true
-    }
-  }
+  ]
 }
