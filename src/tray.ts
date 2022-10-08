@@ -1,6 +1,5 @@
-const path = require('path')
-const electron = require('electron')
-const { Tray, Menu } = electron
+import path from 'path'
+import { Tray, Menu } from 'electron'
 
 function create(shortcuts, context) {
   context.tray = new Tray(path.join(__dirname, '..', 'icon.png'))
@@ -12,17 +11,17 @@ function create(shortcuts, context) {
   tray.on('click', () => {
     const{ main, nav } = views
 
-    if (main.isVisible()) {
-      main.hide()
+    if (main.view.isVisible()) {
+      main.view.hide()
     } else {
-      main.show()
+      main.view.show()
     }
 
-    if (!main.isVisible()) {
+    if (!main.view.isVisible()) {
       nav.hide()
     }
 
-    if (!config.clickThrough && main.isVisible()) {
+    if (!config.clickThrough && main.view.isVisible()) {
       nav.show()
     }
   })

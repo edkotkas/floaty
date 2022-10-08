@@ -1,0 +1,128 @@
+@keyframes slide {
+  100% { width: 0; }
+}
+
+.slide {
+  transition: all .3s ease-in-out;
+}
+
+body {
+  color: ghostwhite !important;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  overflow: hidden;
+
+  .container {
+    height: 50px;
+    -webkit-app-region: drag;
+  }
+
+  .flex {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: 100%;
+
+    .nav {
+      flex-wrap: nowrap;
+    }
+  }
+
+  .nav-wrapper {
+    position: absolute;
+    top: 0;
+    right: 55px;
+    height: 50px;
+    width: 445px;
+    overflow: hidden;
+  }
+
+  .options {
+    background-color: #3c3c3c;
+    width: 436px !important;
+  }
+
+  .navigation {
+    width: 425px;
+    //min-width: 425px;
+    //margin-left: 5px;
+    padding: 0 5px;
+  }
+
+  .address {
+    text-align: center;
+    user-select: none;
+    padding-top: 5px;
+
+    input {
+      -webkit-app-region: no-drag;
+
+      width: 280px;
+      margin-top: 8px;
+      padding: 5px 35px 5px 15px;
+      font-size: small;
+      border: none;
+      color: ghostwhite;
+
+      background-color: dimgray;
+      border-radius: 10px;
+
+      &::placeholder {
+        color: darkgray;
+      }
+
+      &:focus {
+        //outline-style: solid;
+        //outline-color: deeppink;
+
+        outline: none;
+        box-shadow: 0 0 5px 1px deeppink;
+
+        background-color: #242424;
+
+        &::placeholder {
+          color: dimgray;
+        }
+      }
+    }
+
+    .btn {
+      transform: translateY(30%);
+      width: 10px;
+      height: 10px;
+      padding: 5px 20px 5px 5px;
+
+      &#favourite {
+        margin-right: -45px;
+      }
+
+      &#go {
+        margin-left: -45px;
+      }
+    }
+  }
+
+  .nav {
+    .btn {
+      padding-top: 6px;
+    }
+  }
+
+  .control {
+    border-left: 1px solid dimgray;
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-top: 8px;
+
+    .btn {
+      width: 18px;
+      height: 18px;
+
+      &:last-child {
+        margin-right: 10px;
+      }
+    }
+  }
+}

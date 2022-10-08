@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+
+  <title>Tools</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="../styles/main.css">
+  <script src="index.js"></script>
+</head>
+<body>
+<div class="container">
+  <div class="flex navigation">
+    <div class="nav">
+      <div class="btn" id="back" title="Back"></div>
+      <div class="btn" id="forward" title="Forward"></div>
+      <div class="btn" id="refresh" title="Refresh"></div>
+    </div>
+    <div class="nav address">
+      <input id="url" type="url" placeholder="example.com">
+      <div class="btn" id="go" title="Go"></div>
+    </div>
+  </div>
+  <div class="nav-wrapper slide hidden">
+    <div class="flex navigation options">
+      <div class="nav">
+        <div class="btn" id="external" title="Open Current Page in Browser"></div>
+        <div class="btn" id="paste" title="Open URL From Clipboard"></div>
+      </div>
+      <div class="nav">
+        <div class="btn" id="opacity" title="Cycle through stages of opacity"></div>
+        <div class="btn" id="clickThrough" title="Toggle Mouse Events on the Window"></div>
+      </div>
+      <div class="nav">
+        <div class="btn" id="adBlock" title="Toggle AdBlock"></div>
+        <div class="btn" id="mute" title="Toggle Mute"></div>
+      </div>
+      <div class="nav">
+        <div class="btn" id="reset" title="Reset Settings"></div>
+        <div class="btn" id="help" title="Help"></div>
+      </div>
+    </div>
+  </div>
+  <div class="flex control">
+      <div class="btn" id="options" title="Options"></div>
+      <div class="btn" id="quit" title="Quit"></div>
+  </div>
+</div>
+</body>
+</html>

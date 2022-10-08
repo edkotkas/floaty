@@ -2,11 +2,11 @@
   "name": "floaty",
   "version": "0.0.0",
   "description": "> Float me a window!",
-  "main": "main.js",
+  "main": "dist/main.js",
   "scripts": {
-    "start": "electron . --inspect",
-    "postinstall": "electron-builder install-app-deps",
-    "build": "electron-builder"
+    "gulp": "gulp",
+    "start": "npm run gulp && electron ./dist/main.js --inspect",
+    "build": "electron-builder install-app-deps"
   },
   "build": {
     "appId": "com.edkotkas.floaty",
@@ -15,14 +15,21 @@
   "author": "Eduard Kotkas",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^10.1.5",
-    "node-sass": "^4.14.1",
-    "electron-builder": "^22.9.1"
-  },
-  "dependencies": {
-    "@cliqz/adblocker-electron": "^1.18.3",
-    "cross-fetch": "^3.0.6",
-    "electron-store": "^6.0.1"
+    "@cliqz/adblocker-electron": "^1.25.0",
+    "@types/gulp": "^4.0.9",
+    "cross-fetch": "^3.1.5",
+    "del": "^7.0.0",
+    "electron": "^20.1.1",
+    "electron-builder": "^23.5.0",
+    "electron-store": "^6.0.1",
+    "gulp": "^4.0.2",
+    "gulp-sass": "^5.1.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "merge-stream": "^2.0.0",
+    "node-sass": "^7.0.1",
+    "sass": "^1.55.0",
+    "typescript": "^4.8.2"
   },
   "repository": {
     "type": "git",
